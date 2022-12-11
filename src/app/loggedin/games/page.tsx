@@ -1,27 +1,50 @@
-// 'use client'
+// "use client";
+import usZips from "us-zips/map";
 import Event from "./event";
 import supabase from "../../../util/supabase";
+import Modal from "./modal";
+import NewEventForm from "./newEventForm";
+export const revalidate = 1;
+let location = usZips.get("95624");
 
 async function getGroups() {
   let { data, error } = await supabase.rpc("search_groups", {
     distance: 100,
-    location: "location",
+    geo: `POINT(${location?.longitude} ${location?.latitude})`,
   });
   console.log(error);
   return { data };
 }
 
 export default async function Page() {
+  //fetch groups
+  console.log("user", !supabase.auth);
   const { data } = await getGroups();
+  //set button icon
+
+  const buttonIcon = (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="mr-2 h-5 w-5 fill-none stroke-white"
+    >
+      <path
+        fillRule="evenodd"
+        d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
 
   return (
-    <>
+    <div>
       <div className="mt-16 mb-16 h-[calc(100vh-theme(space.32))] overflow-y-scroll p-4">
         {data &&
           data.map((group) => (
             <Event
               key={group.id}
-              name={group.name}
+              group_name={group.group_name}
               start_date={group.start_date}
               start_time={group.start_time}
               owner_name={group.user_name}
@@ -49,22 +72,10 @@ export default async function Page() {
           </svg>
           Set up notifications
         </button>
-        <button className="my-3 flex items-center rounded-md bg-slate-800 py-2 px-5 text-white shadow-md shadow-slate-700 hover:bg-slate-700">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="mr-2 h-5 w-5 fill-none stroke-white"
-          >
-            <path
-              fillRule="evenodd"
-              d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Create a group
-        </button>
+        <Modal buttonIcon={buttonIcon} buttonText={"Create a Group"}>
+          <NewEventForm />
+        </Modal>
       </div>
-    </>
+    </div>
   );
 }
