@@ -11,9 +11,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const [supabaseClient] = useState(() => createBrowserSupabaseClient());
-  const [Authed, setAuthed] = useState(true);
 
-  let router = useRouter();
 
   //handle logging out and redirect to login
 
