@@ -1,40 +1,66 @@
+import artwork from "../../../../util/artwork";
 interface Props {
-  owner_id: String;
-  format: String;
-  start_time: String;
-  start_date: String;
-  owner_name: String;
-  description: String;
-  address: String;
-  group_name: String;
+  owner_id: string;
+  format: string;
+  start_time: string;
+  start_date: string;
+  owner_name: string;
+  description: string;
+  address: string;
+  group_name: string;
   private_venue: Boolean;
+  name: string;
 }
 export default function Event({
+  name,
   owner_id,
   address,
   group_name,
   private_venue,
   format,
-  time,
+  start_date,
+  start_time,
   description,
 }: Props) {
+  const date = new Date(start_date);
+
+  let displayDate = () => {
+    if (
+      date.getMonth() === new Date().getMonth() &&
+      date.getFullYear() === new Date().getFullYear()
+    ) {
+      if (date.getDate() === new Date().getDate()) {
+        return "Today";
+      }
+      if (date.getDay() === new Date().getDate() + 1) {
+        return "Tomorrow";
+      }
+    }
+
+    return `${date.getMonth() + 1}/${date.getDate()}`;
+  };
   return (
-    <div className="mt-4 box-border grid w-full grid-cols-12 grid-rows-[repeat(auto)] gap-2 rounded ">
+    <div className="mt-4 box-border grid w-full shrink-0 basis-full grid-cols-12 grid-rows-[repeat(auto)] gap-2 lg:basis-5/12 ">
+      <img
+        className="col-span-4 col-start-1 row-span-5 row-start-1 h-full object-cover"
+        src={artwork()}
+        alt=""
+      />
       <div className="col-span-8 row-span-1 row-start-1 text-xs uppercase text-slate-400">
-        {format} - 3:30PM
+        {format}
       </div>
-      <div className="col-span-12 row-span-1 row-start-2 -mt-2 text-xl font-bold text-slate-50">
+      <div className="col-span-8 col-start-5 row-span-1 row-start-2 -mt-2 text-xl font-bold text-slate-50">
         {group_name}
       </div>
-      <div className="col-span-12 row-span-1 row-start-3 text-sm text-slate-200">
+      <div className="col-span-8 col-start-5 row-span-1 row-start-3 text-sm text-slate-200">
         {description}
       </div>
-      <div className="text-md col-span-12 row-span-1 row-start-4 flex  items-start text-slate-200">
+      <div className="text-md col-span-8 col-start-5 row-span-1 row-start-4 flex  items-start text-slate-200">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 25 25"
           fill="currentColor"
-          className="mr-1 h-5 w-5 fill-slate-200"
+          className="mr-1 h-5 w-5 shrink-0 fill-slate-200"
         >
           <path d="M12.75 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM7.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM8.25 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM9.75 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM10.5 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM12.75 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM14.25 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 13.5a.75.75 0 100-1.5.75.75 0 000 1.5z" />
           <path
@@ -43,14 +69,21 @@ export default function Event({
             clipRule="evenodd"
           />
         </svg>
-        Today
+        {displayDate()} -{" "}
+        {" " +
+          (date.getHours() % 12) +
+          ":" +
+          (date.getMinutes() > 10
+            ? date.getMinutes()
+            : "0" + date.getMinutes()) +
+          (date.getHours() > 12 ? "PM" : "AM")}
       </div>
-      <div className="text-md col-span-12 row-span-1 row-start-5 flex  items-start text-slate-200">
+      <div className="text-md col-span-8 col-start-5 row-span-1 row-start-5 flex  items-start text-slate-200">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
-          className="mr-1  h-5 w-5 fill-slate-200"
+          className="mr-1 h-5 w-5 shrink-0 fill-slate-200"
         >
           <path
             fillRule="evenodd"
@@ -58,11 +91,11 @@ export default function Event({
             clipRule="evenodd"
           />
         </svg>
-        A-1 Comics - 5361 Auburn Blvd, Sacramento, CA 95841
+        {name}-{address}
       </div>
       <div className=" col-span-12 row-span-1 row-start-6 ">
         {false ? (
-          <button className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-800 py-2 px-5 text-white shadow-md shadow-slate-700 hover:bg-slate-800">
+          <button className="flex w-full items-center justify-center gap-2 rounded bg-slate-800 py-2 px-5 text-white shadow-md shadow-slate-700 hover:bg-slate-800">
             Request to Join
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +111,7 @@ export default function Event({
             </svg>
           </button>
         ) : (
-          <button className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-800 py-2 px-5 text-center text-white shadow-md shadow-slate-700 hover:bg-slate-800">
+          <button className="flex w-full items-center justify-center gap-2 rounded bg-slate-800 py-2 px-5 text-center text-white shadow-md shadow-slate-700 hover:bg-slate-800">
             Join Group
             <svg
               xmlns="http://www.w3.org/2000/svg"
